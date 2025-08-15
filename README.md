@@ -40,7 +40,7 @@ The platform ensures that rental payments are securely held in escrow and releas
 
 8. **BNPL Request Event (Future Integration)**  
    Guests can emit a `BNPLRequested` event when seeking deferred payment terms.
-   In the MVP, this is a conceptual hook — no credit logic implemented.
+   In the MVP, this is a conceptual hook, no credit logic implemented.
    Roadmap includes integration with decentralised credit scoring oracles and stablecoin lending pools.
 
 ---
@@ -90,6 +90,7 @@ BNPL in crypto requires compliance with evolving jurisdictional rules, consumer 
 
 
 **4. Roadmap for TrustRent BNPL Deployment**
+
 Phase 1 (MVP) BNPL request event + logging in TrustRent.sol: Demonstrates architecture extensibility
 
 Phase 2 Oracle-based credit score verification; off-chain data bridging: Operationalises the academic concept of embedded credit scoring
@@ -97,5 +98,6 @@ Phase 2 Oracle-based credit score verification; off-chain data bridging: Operati
 Phase 3 Liquidity pool funding with stablecoin pre-settlement to host: Achieves functional parity with traditional BNPL in a decentralised context
 
 Phase 4 Regulatory compliance automation (smart disclosures, geo-restrictions): Future-proofs the protocol against legislative tightening
+
 
 
