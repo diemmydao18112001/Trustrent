@@ -73,10 +73,12 @@ The platform ensures that rental payments are securely held in escrow and releas
 
 ## Buy Now Pay Later
 **1. Strategic Rationale**
+
 The incorporation of a Buy Now Pay Later (BNPL) mechanism follows the industry trend of embedding payment flexibility directly into rental transactions. In the context of mid-term rental markets, BNPL can serve as a liquidity bridge for tenants, particularly digital nomads and early-career professionals, without resorting to high-cost short-term credit. From a platform competitiveness perspective, BNPL differentiates TrustRent from incumbent rental portals (Airbnb, Booking) by enabling crypto-native deferred settlement, thus directly responding to the judge’s feedback about exploring disruptive payment models.
 
 
 **2. MVP Constraints and Design Choice**
+
 While full BNPL implementation necessitates credit risk assessment, regulatory compliance under consumer credit law, and fraud prevention, these were intentionally excluded from the MVP due to:
 Scope & Timeframe– Hackathon and dissertation timelines preclude integration of live credit bureau APIs (e.g., Experian, Equifax).
 Regulatory Complexity – UK/EU BNPL regulation is converging towards stricter affordability checks; integrating prematurely risks non-compliance.
@@ -86,6 +88,7 @@ Blockchain Determinism – On-chain execution cannot inherently access off-chain
 Instead, the MVP implements a BNPL request event (BNPLRequested) as a scaffold for future integration. This approach demonstrates technical foresight while avoiding scope creep, ensuring the dissertation reflects a viable, staged development pathway.
 
 **3. Regulatory and Risk Considerations**
+
 BNPL in crypto requires compliance with evolving jurisdictional rules, consumer protection, and AML/KYC standards. These will be embedded in future phases via geo-restricted smart contracts and on-chain KYC.
 
 
@@ -98,6 +101,7 @@ Phase 2 Oracle-based credit score verification; off-chain data bridging: Operati
 Phase 3 Liquidity pool funding with stablecoin pre-settlement to host: Achieves functional parity with traditional BNPL in a decentralised context
 
 Phase 4 Regulatory compliance automation (smart disclosures, geo-restrictions): Future-proofs the protocol against legislative tightening
+
 
 
 
