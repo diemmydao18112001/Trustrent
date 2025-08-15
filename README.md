@@ -85,13 +85,17 @@ Blockchain Determinism – On-chain execution cannot inherently access off-chain
 
 Instead, the MVP implements a BNPL request event (BNPLRequested) as a scaffold for future integration. This approach demonstrates technical foresight while avoiding scope creep, ensuring the dissertation reflects a viable, staged development pathway.
 
-**3. Regulatory and Risk Considerations****
+**3. Regulatory and Risk Considerations**
 BNPL in crypto requires compliance with evolving jurisdictional rules, consumer protection, and AML/KYC standards. These will be embedded in future phases via geo-restricted smart contracts and on-chain KYC.
 
 
 **4. Roadmap for TrustRent BNPL Deployment**
 Phase 1 (MVP) BNPL request event + logging in TrustRent.sol: Demonstrates architecture extensibility
+
 Phase 2 Oracle-based credit score verification; off-chain data bridging: Operationalises the academic concept of embedded credit scoring
+
 Phase 3 Liquidity pool funding with stablecoin pre-settlement to host: Achieves functional parity with traditional BNPL in a decentralised context
+
 Phase 4 Regulatory compliance automation (smart disclosures, geo-restrictions): Future-proofs the protocol against legislative tightening
+
 
