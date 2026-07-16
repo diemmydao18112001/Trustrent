@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+
+# Hardhat generated files
+cache/
+artifacts/
+
+# Environment variables
+.env
+
+# Test coverage
+coverage/
+coverage.json
+
+# Generated types and logs
+typechain-types/
+*.log
+
+# Operating-system files
+.DS_Store
+Thumbs.db
