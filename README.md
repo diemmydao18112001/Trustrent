@@ -1,107 +1,220 @@
-# TrustRent – Decentralized Mid-Term Rental Platform
+# TrustRent — Smart-Contract Escrow for Mid-Term Rentals
 
-## Overview
-TrustRent is a blockchain-based escrow protocol for mid-term rentals (1–6 months), designed for crypto-native users seeking transparent, low-fee alternatives to centralized rental platforms.
+TrustRent is a fintech prototype exploring how smart contracts could support transparent payment flows for mid-term rentals of one to six months.
 
-The platform ensures that rental payments are securely held in escrow and released monthly to hosts, with built-in early termination refunds, dispute resolution, and NFT proof-of-booking. The MVP also includes Travel Package Booking and a Buy Now Pay Later (BNPL) request event as a placeholder for future integration with decentralised credit scoring.
+The system uses ERC-20 escrow to hold tenant funds, release payments to hosts in monthly stages, calculate early-termination refunds, support dispute allocation and issue ERC-721 booking receipts.
 
+> **MVP status:** The smart-contract prototype was deployed and verified on Ethereum Sepolia. A wallet-integrated Web3 frontend was outside the final delivered scope; the working on-chain flow is reproducible through Etherscan.
 
-## Contents
-- **Contracts**
-  - Solidity smart contracts: `TrustRent`, `BookingNFT`, `TestToken`, mocks
-- **Scripts**
-  - Deployment scripts for localhost & Sepolia
-- **Tests**
-  - Hardhat tests (16 total, all passing)
-- **Addresses**
-  - Deployment addresses for localhost and Sepolia
+## Business Problem
 
----
+Large rental platforms provide reach and convenience but can involve high platform fees, limited transparency around payment flows and opaque dispute-resolution processes.
 
-## Key Features
+TrustRent explores an alternative model focused on:
 
-1. **Escrow Logic**  
-   Tenant funds are held in the contract and released per 30-day epoch.  
-   Funds are denominated in ERC-20 stablecoins (mock USDC-like `TestToken` in MVP).
+- Transparent escrow and staged host payments
+- Lower and traceable platform fees
+- Rules-based early-termination refunds
+- Auditable dispute payouts
+- Verifiable proof of booking
 
-2. **Early Termination & Refunds**  
-   Guests can terminate early and receive a refund for unused months. Refund calculation is automatic and verifiable on-chain.
+## My Contribution
 
-3. **Dispute Resolution**  
-   Admin can split the remaining escrow between the host and guest upon dispute. Ensures fair handling of service failures or unexpected circumstances.
+I led the smart-contract workstream and was responsible for:
 
-4. **NFT Proof-of-Booking**  
-   Each confirmed booking mints an ERC-721 NFT as immutable proof of transaction.
-   Metadata includes booking details, enabling on-chain verifiability.
+- Designing and implementing the core escrow and payment logic in `TrustRent.sol`
+- Building the ERC-721 booking receipt in `BookingNFT.sol`
+- Creating a six-decimal USDC-like test token in `TestToken.sol`
+- Implementing monthly releases, early-termination refunds and dispute payout logic
+- Applying a 3% platform fee only to the host payout leg
+- Identifying and resolving timestamp and integer-rounding edge cases
+- Developing Hardhat tests across booking, release, refund, dispute, overlap, NFT and BNPL-event scenarios
+- Deploying and verifying the contracts on Ethereum Sepolia
+- Creating a reproducible Etherscan runbook for the approve-to-book flow
+- Connecting technical design decisions with business-model, risk, governance and regulatory considerations
 
-6. **Travel Package Add-On**  
-   An optional module for guests to purchase a travel package alongside accommodation.
-   Recorded as part of the booking transaction for transparency.
+## Core MVP Features
 
-8. **BNPL Request Event (Future Integration)**  
-   Guests can emit a `BNPLRequested` event when seeking deferred payment terms.
-   In the MVP, this is a conceptual hook, no credit logic implemented.
-   Roadmap includes integration with decentralised credit scoring oracles and stablecoin lending pools.
+### ERC-20 Escrow
 
----
+Tenant funds are transferred into the smart contract at booking and held in escrow.
 
-## Technical Architecture
+The prototype uses a six-decimal test token designed to behave similarly to USDC.
 
-**Smart Contracts**  
-   TrustRent.sol – Core escrow, booking, dispute, travel add-on, BNPL event. 
-   BookingNFT.sol – ERC-721 implementation for booking receipts. 
-   TestToken.sol – Mock ERC-20 stablecoin (6 decimals, USDC-like). 
-   MockV3Aggregator.sol – Mock Chainlink price feed for testing.
+### Monthly Host Payments
 
-**Testing**  
-  Implemented with Hardhat’s testing suite. 
-  Covers booking lifecycle, refunds, disputes, NFT metadata, travel add-ons, and BNPL events. 
-  All 16 Hardhat tests pass locally. The contracts were deployed and verified on Ethereum Sepolia, where the approve-to-book flow and validation behaviour were demonstrated through Etherscan.
+Payments are released to the host in monthly stages rather than as a single upfront payout.
 
---- 
+### Early-Termination Refunds
 
-## Current Sepolia Deployment (Verified on Etherscan) 
-**TrustRent**
-[0x96aB993BF36bFf2aEED62BDf30564B939e5d2156] (https://sepolia.etherscan.io/address/0x96aB993BF36bFf2aEED62BDf30564B939e5d2156#code) 
+When a tenant cancels early, the contract calculates:
 
-**BookingNFT**
-[0x997bce0B6742E849bb52acCbbD96eA8Ad52908B3](https://sepolia.etherscan.io/address/0x997bce0B6742E849bb52acCbbD96eA8Ad52908B3#code)
+- The host payment for completed months
+- The refund for unused months
+- The platform fee on the host payout only
 
-**TestToken** 
-[0xE1293B5F36Ab7D759252Ef4a3413Be194460bdEa](https://sepolia.etherscan.io/address/0xE1293B5F36Ab7D759252Ef4a3413Be194460bdEa#code)
+Guest refunds are not charged a platform fee.
 
+### Dispute Resolution
 
-## Buy Now Pay Later
-**1. Strategic Rationale**
+An administrator can allocate the remaining escrow between the host and guest.
 
-The incorporation of a Buy Now Pay Later (BNPL) mechanism follows the industry trend of embedding payment flexibility directly into rental transactions. In the context of mid-term rental markets, BNPL can serve as a liquidity bridge for tenants, particularly digital nomads and early-career professionals, without resorting to high-cost short-term credit. From a platform competitiveness perspective, BNPL differentiates TrustRent from incumbent rental portals (Airbnb, Booking) by enabling crypto-native deferred settlement, thus directly responding to the judge’s feedback about exploring disruptive payment models.
+The contract validates that the combined payouts do not exceed the escrow balance and emits an auditable dispute event.
 
+### NFT Proof of Booking
 
-**2. MVP Constraints and Design Choice**
+A successful booking mints an ERC-721 receipt containing the booking reference and rental period.
 
-While full BNPL implementation necessitates credit risk assessment, regulatory compliance under consumer credit law, and fraud prevention, these were intentionally excluded from the MVP due to:
-Scope & Timeframe– Hackathon and dissertation timelines preclude integration of live credit bureau APIs (e.g., Experian, Equifax).
-Regulatory Complexity – UK/EU BNPL regulation is converging towards stricter affordability checks; integrating prematurely risks non-compliance.
+No personal customer information is stored in the NFT metadata.
 
-Blockchain Determinism – On-chain execution cannot inherently access off-chain credit data without oracles, which introduces latency and trust dependencies.
+## Fee Model
 
-Instead, the MVP implements a BNPL request event (BNPLRequested) as a scaffold for future integration. This approach demonstrates technical foresight while avoiding scope creep, ensuring the dissertation reflects a viable, staged development pathway.
+The platform fee is configured as:
 
-**3. Regulatory and Risk Considerations**
+```solidity
+FEE_BPS = 300;
+```
 
-BNPL in crypto requires compliance with evolving jurisdictional rules, consumer protection, and AML/KYC standards. These will be embedded in future phases via geo-restricted smart contracts and on-chain KYC.
+This represents a 3% fee.
 
+The fee is charged only when funds are paid to the host through the release, cancellation or dispute flows. It is not charged when the guest deposits funds, and guest refunds are not fee-bearing.
 
-**4. Roadmap for TrustRent BNPL Deployment**
+## Technical Stack
 
-Phase 1 (MVP) BNPL request event + logging in TrustRent.sol: Demonstrates architecture extensibility
+- Solidity
+- Hardhat
+- JavaScript
+- OpenZeppelin Contracts
+- ERC-20
+- ERC-721
+- Ethereum Sepolia
+- Etherscan
 
-Phase 2 Oracle-based credit score verification; off-chain data bridging: Operationalises the academic concept of embedded credit scoring
+Security-related patterns used in the MVP include:
 
-Phase 3 Liquidity pool funding with stablecoin pre-settlement to host: Achieves functional parity with traditional BNPL in a decentralised context
+- `ReentrancyGuard`
+- `SafeERC20`
+- Checks–Effects–Interactions on key payout flows
+- Explicit validation for timing, overlapping bookings and escrow limits
 
-Phase 4 Regulatory compliance automation (smart disclosures, geo-restrictions): Future-proofs the protocol against legislative tightening
+## Testing and Evidence
+All 16 Hardhat tests pass locally.
+The project includes a Hardhat test suite covering:
 
+- Booking deposits
+- Monthly releases
+- Early cancellations and refunds
+- Dispute allocations
+- Overlapping-booking validation
+- NFT minting and metadata
+- BNPL request events
+- Timing and token-conversion edge cases
 
+The contracts were deployed and verified on Ethereum Sepolia, where the following behaviour was demonstrated through Etherscan:
 
+1. Approving the TrustRent contract to spend the test token
+2. Creating a valid booking
+3. Verifying the emitted `Booked` event
+4. Confirming NFT ownership through `ownerOf`
+5. Confirming NFT metadata through `tokenURI`
+6. Reproducing the `Too early` validation error for an invalid start time
 
+## Sepolia Deployment
+
+| Contract | Address |
+|---|---|
+| TrustRent | [`0x96aB993BF36bFf2aEED62BDf30564B939e5d2156`](https://sepolia.etherscan.io/address/0x96aB993BF36bFf2aEED62BDf30564B939e5d2156#code) |
+| BookingNFT | [`0x997bce0B6742E849bb52acCbbD96eA8Ad52908B3`](https://sepolia.etherscan.io/address/0x997bce0B6742E849bb52acCbbD96eA8Ad52908B3#code) |
+| TestToken | [`0xE1293B5F36Ab7D759252Ef4a3413Be194460bdEa`](https://sepolia.etherscan.io/address/0xE1293B5F36Ab7D759252Ef4a3413Be194460bdEa#code) |
+
+Deployment metadata is also available in:
+
+- `addresses.localhost.json`
+- `addresses.sepolia.json`
+
+## BNPL Exploration
+
+BNPL was considered as a possible way to reduce the upfront payment burden for tenants.
+
+For the MVP, it was deliberately limited to a `BNPLRequested` event:
+
+- No credit is issued
+- No funds are advanced
+- The escrow rules are unchanged
+- Credit scoring, affordability checks, liquidity and regulatory compliance remain outside the MVP scope
+
+A future product version would require integration with an appropriately regulated payment or electronic-money partner rather than implementing credit directly within the prototype.
+
+## Additional Experimentation
+
+A travel-package add-on was explored as an optional extension to the booking flow.
+
+It is not part of the core escrow value proposition and is retained as an example of how additional services could be recorded alongside a rental booking.
+
+## Known Limitations
+
+The current MVP has several known limitations:
+
+- No wallet-integrated Web3 frontend
+- Centralised administrator role for dispute resolution
+- Booking overlap checks are not optimised for scale
+- BNPL is an intent event rather than a credit product
+- `book()` should be reordered to follow strict Checks–Effects–Interactions
+- Dispute resolution should update the booking state more comprehensively
+- Functional tests should be extended with property and invariant testing
+
+## Planned Improvements
+
+Potential next steps include:
+
+- Build a React or Next.js wallet interface
+- Add invariant tests for fee conservation and escrow non-underflow
+- Move administrative permissions to a multisig and timelock
+- Introduce an independent arbitrator interface
+- Add an anyone-can-release mechanism after the payment due date
+- Improve booking-overlap checks for larger-scale use
+- Integrate a regulated payments partner for production pay-in and payout flows
+
+## Run Locally
+
+Requirements:
+
+- Node.js 22 or later
+- npm
+
+Install dependencies:
+
+```bash
+npm ci
+```
+
+Compile the contracts:
+
+```bash
+npx hardhat compile
+```
+
+Run the test suite:
+
+```bash
+npx hardhat test
+```
+
+The project was most recently tested with Node.js `v24.18.0`.
+
+## Repository Structure
+
+```text
+contracts/                 Solidity contracts
+scripts/                   Deployment and configuration scripts
+test/                      Hardhat tests
+addresses.localhost.json   Local deployment addresses
+addresses.sepolia.json     Sepolia deployment addresses
+hardhat.config.js          Hardhat configuration
+package.json               Dependencies and scripts
+package-lock.json          Reproducible dependency versions
+```
+
+## Academic Context
+
+TrustRent was developed as part of the MSc Financial Technology Hackathon Project at the University of Exeter Business School.
