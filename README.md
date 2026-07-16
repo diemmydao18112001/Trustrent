@@ -56,7 +56,7 @@ The platform ensures that rental payments are securely held in escrow and releas
 **Testing**  
   Implemented with Hardhat’s testing suite. 
   Covers booking lifecycle, refunds, disputes, NFT metadata, travel add-ons, and BNPL events. 
-  All 16 tests pass on local and Sepolia testnet.
+  All 16 Hardhat tests pass locally. The contracts were deployed and verified on Ethereum Sepolia, where the approve-to-book flow and validation behaviour were demonstrated through Etherscan.
 
 --- 
 
