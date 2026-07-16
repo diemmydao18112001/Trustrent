@@ -1,4 +1,4 @@
-# TrustRent — Smart-Contract Escrow for Mid-Term Rentals
+# TrustRent - Smart-Contract Escrow for Mid-Term Rentals
 
 TrustRent is a fintech prototype exploring how smart contracts could support transparent payment flows for mid-term rentals of one to six months.
 
